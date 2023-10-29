@@ -10,7 +10,7 @@ import argparse
 
 parser=argparse.ArgumentParser(prog="./montana",
                                description="Montana is a command line sniffer based on Scapy",
-                               epilog="Press q to quit.")
+                               epilog="Open Source, made with love by kiso6")
 
 parser.add_argument("-i","--interface",help="Select the interface to sniff on")
 parser.add_argument("-t","--timeout",help="Set the length of the sniffing session")
