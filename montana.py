@@ -37,7 +37,8 @@ print(r""" __  __  ____  _   _ _______       _   _
 
 interface = argv[1] ## ARGV[0] = script title 
 tOut = int(argv[2])
-filters =["udp or tcp or icmp or arp"]
+filters =["udp or tcp or icmp or arp",
+          "udp","tcp","icmp","arp"]
 udp = []
 tcp = []
 icmp = []
@@ -57,7 +58,10 @@ def total_Packets(udp,tcp,icmp,arp):
     return (len(udp)+len(tcp)+len(arp)+len(icmp))
 
 def compute_Percentage(protocol=None,fs=1):
-    return (len(protocol)/fs)
+    if (fs !=0):
+        return (len(protocol)/fs)
+    else:
+        print("No packets captured.\r\n")
 
 def pie_Plot(udp=udp,tcp=tcp,icmp=icmp,arp=arp):
     labels='udp','tcp','icmp','arp'
@@ -95,35 +99,53 @@ selector=input("Do you want to sniff over interface "+argv[1]+" during "+argv[2]
 
 if selector=='y' or selector=='Y':
     print("Let's sniff !!!!\r\n")
-    sniff(filter=filters[0],count=0,prn=lambda x:store_Packet(x),iface=interface,timeout=tOut)
+    match argv[3]:
+        case "-filter--all":
+            sniff(filter=filters[0],count=0,prn=lambda x:store_Packet(x),iface=interface,timeout=tOut)
+        case "-filter--udp":
+            sniff(filter=filters[1],count=0,prn=lambda x:store_Packet(x),iface=interface,timeout=tOut)
+        case "-filter--tcp":
+            sniff(filter=filters[2],count=0,prn=lambda x:store_Packet(x),iface=interface,timeout=tOut)
+        case "-filter--icmp":
+            sniff(filter=filters[3],count=0,prn=lambda x:store_Packet(x),iface=interface,timeout=tOut)
+        case "-filter--arp":
+            sniff(filter=filters[4],count=0,prn=lambda x:store_Packet(x),iface=interface,timeout=tOut)
+        case other:
+            print("No filter specified, exiting.\r\n")
+            exit(-1)
 
-    if argv[3]=="-nstat":
+
+    if argv[4]=="-nstat":
         display_Net_Stats(udp,tcp,arp,icmp)
     else:
         print("** No stats \r\n")
 
-    if argv[4]=="-list":
-        if argv[5] =="--udp":
-            list_Packets(udp)
-        if argv[5] =="--tcp":
-            list_Packets(tcp)
-        if argv[5] =="--arp":
-            list_Packets(arp)
-        if argv[5] =="--icmp":
-            list_Packets(icmp)
-        if argv[5] =="--all":
-            list_Packets(udp)
-            list_Packets(tcp)
-            list_Packets(arp)
-            list_Packets(icmp)
-        if argv[5] == "--no":
-            print("No list \r\n")
+    if argv[5]=="-list":
+        match argv[6]: 
+            case "--udp":
+                list_Packets(udp)
+            case "--tcp":
+                list_Packets(tcp)
+            case "--arp":
+                list_Packets(arp)
+            case "--icmp":
+                list_Packets(icmp)
+            case "--all":
+                list_Packets(udp)
+                list_Packets(tcp)
+                list_Packets(arp)
+                list_Packets(icmp)
+            case other:
+                print("No list \r\n")
     
-    if argv[6] == "-out":
-        Path(argv[7]).touch()
-        oFile=open(argv[7],"w")
-        output_Sniff(protocol=tcp,output=oFile)
-        oFile.close()
+    match argv[7]:
+        case "-out":
+            Path(argv[8]).touch()
+            oFile=open(argv[8],"w")
+            output_Sniff(protocol=tcp,output=oFile)
+            oFile.close()
+        case other:
+            print("No output file.\r\n")
 
 else:
     print("Wtf bro ?\r\n")
