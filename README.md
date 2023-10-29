@@ -6,10 +6,9 @@
 To install Montana, you only have to clone the following repository
 
 ```bash
-pip install scapy
-pip install matplotlib
-pip install numpy
 git clone https://github.com/kiso6/montana_sniffer.git
+cd ./montana_sniffer
+sudo ./install.sh
 ```
 
 ## Use Montana 
@@ -17,10 +16,31 @@ git clone https://github.com/kiso6/montana_sniffer.git
 Montana is a commande line based sniffer. You can use as follows:
 
 ```bash
-sudo python3 montana.py argv[1] argv[2] ... argv[5]
-```
-###  Arguments 
+usage: montana [-h] [-i INTERFACE] [-t TIMEOUT] [-f FILTER] [-nstat NETSTAT] [-l LIST] [-of OUTPUT]
 
-!!!! WIP !!!!
+Montana is a command line sniffer based on Scapy
+
+Options:
+  -h, --help            Show this help message and exit
+  -i INTERFACE, --interface INTERFACE
+                        Select the interface to sniff on
+  -t TIMEOUT, --timeout TIMEOUT
+                        Set the length of the sniffing session
+  -f FILTER, --filter FILTER
+                        Configure the filter applied to the sniffer
+  -nstat NETSTAT, --netstat NETSTAT
+                        Generates statistics
+  -l LIST, --list LIST  Lists the packets captured (highly precise description)
+  -of OUTPUT, --output OUTPUT
+                        Store the captured packets in output file
+
+example:
+
+# Listen on interface wlan0 during 10min for tcp packets and store everything in logs.txt
+montana -i wlan0 -t 600 -f tcp -nstat yes -l no -of ./logs.txt
+
+Open Source, made with love by kiso6
+
+```
 
 
