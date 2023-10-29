@@ -1,11 +1,14 @@
 # montana_sniffer
- Python homemade sniffer 
+ Python homemade sniffer based on Scapy features 
 
 
 ## Install Montana 
 To install Montana, you only have to clone the following repository
 
 ```bash
+pip install scapy
+pip install matplotlib
+pip install numpy
 git clone https://github.com/kiso6/montana_sniffer.git
 ```
 
