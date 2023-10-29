@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from sys import argv
 from sys import exit
 import numpy as np
+from pathlib import Path
+
 
 
 
@@ -25,11 +27,11 @@ OSI LAYERS
 """
 
 print(r""" __  __  ____  _   _ _______       _   _          
-    |  \/  |/ __ \| \ | |__   __|/\   | \ | |   /\    
-    | \  / | |  | |  \| |  | |  /  \  |  \| |  /  \   
-    | |\/| | |  | | . ` |  | | / /\ \ | . ` | / /\ \  
-    | |  | | |__| | |\  |  | |/ ____ \| |\  |/ ____ \ 
-    |_|  |_|\____/|_| \_|  |_/_/    \_\_| \_/_/    \_\ \r\n""")
+          |  \/  |/ __ \| \ | |__   __|/\   | \ | |   /\    
+          | \  / | |  | |  \| |  | |  /  \  |  \| |  /  \   
+          | |\/| | |  | | . ` |  | | / /\ \ | . ` | / /\ \  
+          | |  | | |__| | |\  |  | |/ ____ \| |\  |/ ____ \ 
+          |_|  |_|\____/|_| \_|  |_/_/    \_\_| \_/_/    \_\ """)
 
 interface = argv[1] ## ARGV[0] = script title 
 tOut = int(argv[2])
@@ -71,10 +73,19 @@ def display_Net_Stats(udp=None,tcp=None,arp=None,icmp=None):
 
 def list_Packets(protocol=None):
     if len(protocol) == 0:
-        exit(ValueError)
+        print("!!! Nothing to list \r\n")
+        exit(-1)
     for i in range(len(protocol)):
         print("*** PACKET N° " + str(i) + "\r\n" )
         protocol[i].show()
+
+def output_Sniff(protocol=None,output=None):
+    if len(protocol) == 0:
+        print("!!! Nothing to write in log file\r\n")
+        exit(-1)
+    for i in range(len(protocol)):
+        output.write("*** PACKET N° " + str(i) + "\r\n" )
+        output.write(str(protocol[i])+"\r\n")
 
 
 print("*** Welcome to Montana *** \r\n")
@@ -105,6 +116,12 @@ if selector=='y' or selector=='Y':
             list_Packets(icmp)
         if argv[5] == "--no":
             print("No list \r\n")
+    
+    if argv[6] == "-out":
+        Path(argv[7]).touch()
+        oFile=open(argv[7],"w")
+        output_Sniff(protocol=tcp,output=oFile)
+        oFile.close()
 
 else:
     print("Wtf bro ?\r\n")

@@ -36,12 +36,14 @@ sudo python3 montana.py argv[1] argv[2] ... argv[5]
         --icmp = lists icmp packets  
         --all = lists all the protocols implemented  
         --no = doesn't list any kind of packets  
+* argv[6]: "-out" output the results in an output file **ONLY TCP ATM**  
+* argv[7]: path to the output file  
 
 Example :
 ```bash
-#Listen on wlan0 during 30 seconds, displays the statistical results and list icmp packets captured 
+#Listen on wlan0 during 30 seconds, displays the statistical results and list icmp packets captured and record in test.txt
 
-sudo python3 montana.py wlan0 30 -nstat -list --icmp
+sudo python3 montana.py wlan0 30 -nstat -list --icmp -out "./test.txt"
 ```
 
 
