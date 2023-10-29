@@ -6,9 +6,22 @@ from sys import argv
 from sys import exit
 import numpy as np
 from pathlib import Path
+import argparse
+
+parser=argparse.ArgumentParser(prog="./montana",
+                               description="Montana is a command line sniffer based on Scapy",
+                               epilog="Press q to quit.")
+
+parser.add_argument("-i","--interface",help="Select the interface to sniff on")
+parser.add_argument("-t","--timeout",help="Set the length of the sniffing session")
+parser.add_argument("-f","--filter",help="Configure the filter applied to the sniffer")
+parser.add_argument("-nstat","--netstat",help="Generates statistics")
+parser.add_argument("-l","--list",help="Lists the packets captured (highly precise description)")
+parser.add_argument("-of","--output",help="Store the captured packets in output file")
 
 
-
+#./montana.py -i wlan0 -t 10 -f udp -nstat -l all -of ./text
+args=parser.parse_args()
 
 
 
@@ -35,8 +48,8 @@ print(r""" __  __  ____  _   _ _______       _   _
           | |  | | |__| | |\  |  | |/ ____ \| |\  |/ ____ \ 
           |_|  |_|\____/|_| \_|  |_/_/    \_\_| \_/_/    \_\ """)
 
-interface = argv[1] ## ARGV[0] = script title 
-tOut = int(argv[2])
+interface = args.interface #argv[1] ## ARGV[0] = script title 
+tOut = int(args.timeout)#int(argv[2])
 filters =["udp or tcp or icmp or arp",
           "udp","tcp","icmp","arp"]
 udp = []
@@ -95,57 +108,55 @@ def output_Sniff(protocol=None,output=None):
 
 
 print("*** Welcome to Montana *** \r\n")
-selector=input("Do you want to sniff over interface "+argv[1]+" during "+argv[2]+" seconds ? [y/N]")
+selector=input("Do you want to sniff over interface "+args.interface +" during "+args.timeout+" seconds ? [y/N]")
 
 if selector=='y' or selector=='Y':
     print("Let's sniff !!!!\r\n")
-    match argv[3]:
-        case "-filter--all":
+    match args.filter:#argv[3]
+        case "all":
             sniff(filter=filters[0],count=0,prn=lambda x:store_Packet(x),iface=interface,timeout=tOut)
-        case "-filter--udp":
+        case "udp":
             sniff(filter=filters[1],count=0,prn=lambda x:store_Packet(x),iface=interface,timeout=tOut)
-        case "-filter--tcp":
+        case "tcp":
             sniff(filter=filters[2],count=0,prn=lambda x:store_Packet(x),iface=interface,timeout=tOut)
-        case "-filter--icmp":
+        case "icmp":
             sniff(filter=filters[3],count=0,prn=lambda x:store_Packet(x),iface=interface,timeout=tOut)
-        case "-filter--arp":
+        case "arp":
             sniff(filter=filters[4],count=0,prn=lambda x:store_Packet(x),iface=interface,timeout=tOut)
         case other:
             print("No filter specified, exiting.\r\n")
             exit(-1)
 
 
-    if argv[4]=="-nstat":
+    if args.netstat=="yes":
         display_Net_Stats(udp,tcp,arp,icmp)
     else:
         print("** No stats \r\n")
 
-    if argv[5]=="-list":
-        match argv[6]: 
-            case "--udp":
-                list_Packets(udp)
-            case "--tcp":
-                list_Packets(tcp)
-            case "--arp":
-                list_Packets(arp)
-            case "--icmp":
-                list_Packets(icmp)
-            case "--all":
-                list_Packets(udp)
-                list_Packets(tcp)
-                list_Packets(arp)
-                list_Packets(icmp)
-            case other:
-                print("No list \r\n")
-    
-    match argv[7]:
-        case "-out":
-            Path(argv[8]).touch()
-            oFile=open(argv[8],"w")
-            output_Sniff(protocol=tcp,output=oFile)
-            oFile.close()
+    match args.list: 
+        case "udp":
+            list_Packets(udp)
+        case "tcp":
+            list_Packets(tcp)
+        case "arp":
+            list_Packets(arp)
+        case "icmp":
+            list_Packets(icmp)
+        case "all":
+            list_Packets(udp)
+            list_Packets(tcp)
+            list_Packets(arp)
+            list_Packets(icmp)
         case other:
-            print("No output file.\r\n")
+            print("No list \r\n")
+    
+    if args.output != None:
+        Path(str(args.output)).touch()
+        oFile=open(str(args.output),"w")
+        output_Sniff(protocol=tcp,output=oFile)
+        oFile.close()
+    else:
+        print("No output file.\r\n")
 
 else:
     print("Wtf bro ?\r\n")
