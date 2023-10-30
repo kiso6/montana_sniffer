@@ -6,6 +6,7 @@ from sys import argv
 from sys import exit
 import numpy as np
 from pathlib import Path
+import os
 import argparse
 
 parser=argparse.ArgumentParser(prog="montana",
@@ -17,6 +18,7 @@ parser.add_argument("-t","--timeout",help="Set the length of the sniffing sessio
 parser.add_argument("-f","--filter",help="Configure the filter applied to the sniffer")
 parser.add_argument("-nstat","--netstat",help="Generates statistics")
 parser.add_argument("-l","--list",help="Lists the packets captured (highly precise description)")
+parser.add_argument("-r","--reverse",help="Launch a dig over the source ip addresses")
 parser.add_argument("-of","--output",help="Store the captured packets in output file")
 
 
@@ -27,11 +29,10 @@ args=parser.parse_args()
 
 """ Home Sniffer Montana v1.0
 
-Call script : sudo python3 montana.py INTERFACE timetocapture [-nstat] -list --PROTOCOL
-  
+ 
 OSI LAYERS
 
-(7) [APPLICATIONS] |HTTP/FTP/SSH/DNS|
+(7) [APPLICATIONS] |HTTP/FTP/SSH/DNS| ---> ***NEW : operate reverse DNS to match IP to DN ***
 (6) [PRESENTATION] |SSL/SSH/IMAP/FTP|
 (5) [SESSION     ] |APIs / SOCKET   |
 (4) [TRANSPORT   ] |TCP     /    UDP| ---> Operate
@@ -56,6 +57,18 @@ udp = []
 tcp = []
 icmp = []
 arp = []
+
+def reverse_IP(protocol=None):
+    for i in range(len(protocol)):
+        pqt=protocol[i]
+        print("Domain name for pqt n°"+str(i)+":")
+        print(pqt)
+        if (pqt.haslayer(IP)):
+            os.system("dig -x "+str(pqt[IP].src)+" +short")
+        elif (pqt.haslayer(IPv6)):
+            os.system("dig -x "+str(pqt[IPv6].src)+" +short")
+        else:
+            print("No IP layer for pqt n°"+str(i))
 
 def store_Packet(x):
     if x.haslayer(UDP):
@@ -149,6 +162,21 @@ if selector=='y' or selector=='Y':
             list_Packets(icmp)
         case other:
             print("No list \r\n")
+    
+    match(args.reverse):
+        case "tcp":
+            reverse_IP(tcp)
+        case "udp":
+            reverse_IP(udp) ## Possibly a non sense
+        case "icmp":
+            reverse_IP(icmp)
+        case "all":
+            print("Reversed tcp requests :\r\n")
+            reverse_IP(tcp)
+            print("Reversed udp requests :\r\n")
+            reverse_IP(udp)
+        case others:
+            print("No reverse lookup. \r\n")
     
     if args.output != None:
         Path(str(args.output)).touch()
