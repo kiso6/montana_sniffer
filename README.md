@@ -1,5 +1,16 @@
-# montana_sniffer
- Python homemade sniffer based on Scapy features 
+# Montana Sniffer
+## Contact
+Unavailable.
+## Disclaimer
+This is an open source project that has **NO MALICIOUS INTENT**. The main goal of this project is to be able to compute statistics over a private home network **LEGITIMATELY**.
+## Features
+Python homemade sniffer based on Scapy features.  
+Actual features implemented:  
+- **Sniff** packets according to filterings rules based on protocols (more filters will be implemented later)
+- **Compute** basic statistics based on the protocols of the received packets on the interface
+- **List** the received packets with highly precise description (show() function of scapy)
+- **Reverse** IP sources to find domain names that communicates with the interface
+- **Record** results in an output file (log file) 
 
 
 ## Install Montana 
