@@ -176,7 +176,7 @@ def check_protocol(x):
                 print("No match in port list for current packet.")
 
 def prem_prn(x):
-    #print(x) disabled for tests
+    print(x)#disable for tests
     store_Packet(x)
     #check_protocol(x) WIP
 
@@ -244,21 +244,8 @@ selector=input("Do you want to sniff over interface "+args.interface +" during "
 # Only store packets for the moment
 if selector=='y' or selector=='Y':
     print("Let's sniff !!!!\r\n")
-    match args.filter:#argv[3]
-        case "all":
-            sniff(filter=filters[0],count=0,prn=lambda x:prem_prn(x),iface=interface,timeout=tOut)
-        case "udp":
-            sniff(filter=filters[1],count=0,prn=lambda x:prem_prn(x),iface=interface,timeout=tOut)
-        case "tcp":
-            sniff(filter=filters[2],count=0,prn=lambda x:prem_prn(x),iface=interface,timeout=tOut)
-        case "icmp":
-            sniff(filter=filters[3],count=0,prn=lambda x:prem_prn(x),iface=interface,timeout=tOut)
-        case "arp":
-            sniff(filter=filters[4],count=0,prn=lambda x:prem_prn(x),iface=interface,timeout=tOut)
-        case other:
-            print("No filter specified, exiting.\r\n")
-            exit(-1)
 
+    sniff(filter=args.filter,count=0,prn=lambda x:prem_prn(x),iface=interface,timeout=tOut)    
 
     if args.netstat=="yes":
         display_Net_Stats(udp,tcp,arp,icmp,dns,http,https)
