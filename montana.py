@@ -129,26 +129,26 @@ def print_stats_ICMP(tab=icmp_stts):
     print("**ICMP STATS**\r\n")
     for k in range(len(tab)):
         if tab[k] != 0.0:
-            print("Nbr of Type "+str(k)+" rqsts ="+tab[k])
+            print("Nbr of Type "+str(k)+" rqsts ="+str(tab[k]))
         else:
             print("No rqsts for type"+str(k))
     print("\r\n")
 
 srcIPs=[]
+
 def list_IP(x):
-    #for k in range(len(srcIPs)):
-    #    if x[IP].src == srcIPs[k]:
-    #        print("IP already in db.")
-    #    else:
     srcIPs.append(str(x[IP].src))
+
+def shortlistIP(tab):
+    return list(set(tab))
 
 def print_IPs(tab):
     print("**List of source IPs**\r\n")
     if len(tab) == 0:
         print("No IP ... Strange behaviour")
     else:
-        for k in range(len(tab)):
-            print(tab[k])
+        for k in tab:
+            print(k)
     print("\r\n")
         
 
@@ -278,7 +278,7 @@ if selector=='y' or selector=='Y':
         print_stats_TCP(values)
         print_stats_ARP(arp_rqsts)
         print_stats_ICMP(icmp_stts)
-        print_IPs(srcIPs)
+        print_IPs(shortlistIP(srcIPs))
     else:
         print("** No stats \r\n")
 
