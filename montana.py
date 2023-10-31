@@ -155,7 +155,7 @@ def print_IPs(tab):
 def reverse_IP(protocol=None):
     for i in range(len(protocol)):
         pqt=protocol[i]
-        print("Domain name for pqt n°"+str(i)+":")
+        #print("Domain name for pqt n°"+str(i)+":")
         if (pqt.haslayer(IP)):
             os.system("dig -x "+str(pqt[IP].src)+" +short")
         elif (pqt.haslayer(IPv6)):
@@ -220,10 +220,12 @@ def compute_Percentage(protocol=None,fs=1):
         print("No packets captured.\r\n")
 
 def pie_Plot(udp=udp,tcp=tcp,icmp=icmp,arp=arp):
-    labels='udp','tcp','icmp','arp'
+    plt.title("Traffic sniffed per protocol")
+    labels=["tcp","udp","icmp","arp"]
     sizes=[len(udp),len(tcp),len(icmp),len(arp)]
     plt.pie(sizes,labels=labels)
-    plt.plot()
+    plt.legend(loc="lower left")
+    plt.show()
 
 # END OF STATS FUNCTIONS
 
@@ -271,8 +273,9 @@ selector=input("Do you want to sniff over interface "+args.interface +" during "
 if selector=='y' or selector=='Y':
     print("Let's sniff !!!!\r\n")
 
-    sniff(filter=args.filter,count=0,prn=lambda x:prem_prn(x),iface=interface,timeout=tOut)    
-
+    sniff(filter=args.filter,count=0,prn=lambda x:prem_prn(x),iface=interface,timeout=tOut)
+    pie_Plot()
+    
     if args.netstat=="yes":
         display_Net_Stats(udp,tcp,arp,icmp,dns,http,https)
         print_stats_TCP(values)
