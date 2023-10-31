@@ -1,4 +1,10 @@
 #!/usr/bin/env python3 
+
+"""
+Author: kiso6
+License: Open Source
+"""
+
 from scapy.all import *
 import matplotlib.pyplot as plt
 from sys import argv
@@ -128,6 +134,24 @@ def print_stats_ICMP(tab=icmp_stts):
             print("No rqsts for type"+str(k))
     print("\r\n")
 
+srcIPs=[]
+def list_IP(x):
+    #for k in range(len(srcIPs)):
+    #    if x[IP].src == srcIPs[k]:
+    #        print("IP already in db.")
+    #    else:
+    srcIPs.append(str(x[IP].src))
+
+def print_IPs(tab):
+    print("**List of source IPs**\r\n")
+    if len(tab) == 0:
+        print("No IP ... Strange behaviour")
+    else:
+        for k in range(len(tab)):
+            print(tab[k])
+    print("\r\n")
+        
+
 def reverse_IP(protocol=None):
     for i in range(len(protocol)):
         pqt=protocol[i]
@@ -142,6 +166,8 @@ def reverse_IP(protocol=None):
 # BEGIN OF PRN FUNCTIONS
 
 def store_Packet(x):
+    if x.haslayer(IP):
+        list_IP(x)
     if x.haslayer(UDP):
         udp.append(x)
     if x.haslayer(TCP):
@@ -252,6 +278,7 @@ if selector=='y' or selector=='Y':
         print_stats_TCP(values)
         print_stats_ARP(arp_rqsts)
         print_stats_ICMP(icmp_stts)
+        print_IPs(srcIPs)
     else:
         print("** No stats \r\n")
 
